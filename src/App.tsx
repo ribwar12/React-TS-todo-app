@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { useTodos } from "./Context/TodoContext";
 
 interface Todo { 
     id:number;
@@ -10,44 +10,17 @@ interface Todo {
 
 export default function Todolistapp() {
 
-    const [ todos ,setTodos ] = useState<Todo[]>(() => {
-        const savedTodo = localStorage.getItem('todos');
-        return savedTodo ? JSON.parse(savedTodo) : [];
-    });
+    const { todos , addTodo , toggleTodo , deleteTodo } = useTodos();
 
     const [ input ,setInput ] = useState<string>('');
 
-    useEffect(() => { 
-        localStorage.setItem('todos' , JSON.stringify(todos))
-    } , [todos]);
+    
 
-    function handleAdd(){
-        if(!input.trim()){
-            return;
-        }
-
-        const newTodo: Todo = {
-            id:Date.now(),
-            text:input.trim(),
-            completed:false,
-
-        }
-
-        setTodos([...todos , newTodo]);
-
-        setInput('');
-    }
-
-
-    function handleToggle(id:number){
-        setTodos(
-            todos.map(todo => todo.id === id ? {...todo , completed:!todo.completed} : todo )
-        )
-    };
-
-    function handleDelete(id:number) {
-        setTodos(todos.filter(todo => todo.id !== id))
-    }
+   function handleAdd(){
+    if (!input.trim()) return;
+    addTodo(input.trim());
+ setInput('');  
+   }
 
     return (
         <>
@@ -75,16 +48,13 @@ export default function Todolistapp() {
             className="flex  items-center p-3 border-b border-gray-300 last:border-0"
             >
                   <span 
-        onClick={() => handleToggle(todo.id)}
+        onClick={() => toggleTodo(todo.id)}
         className={`cursor-pointer flex-1 ${todo.completed ? "line-through text-gray-400" : "text-gray-800"}`}
             >
         {todo.text}
             </span>
             
-            <button onClick={(e) => {
-                 e.stopPropagation(); 
-                handleDelete(todo.id);
-            }}   className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full w-8 h-8 flex items-center justify-center transition-colors"> 
+            <button onClick={(e) => { e.stopPropagation(); deleteTodo(todo.id); }}  className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full w-8 h-8 flex items-center justify-center transition-colors"> 
                 X
             </button>
             

@@ -1,11 +1,7 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useTodos } from "./Context/TodoContext";
 
-interface Todo { 
-    id:number;
-    text:string;
-    completed:boolean;
-}
+
 
 
 export default function Todolistapp() {
